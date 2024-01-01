@@ -56,7 +56,7 @@ const turnOffNotification = async (accommodation: Accommodation) => {
             }
         )
         if (!response.ok) {
-            throw new Error(`Error fetching data from Airtable ${response.status}. Response: ${response.body}`);
+            throw new Error(`Error updating data in Airtable ${response.status}. Response: ${response.body}`);
         }
     } catch (error) {
         console.error(error)
