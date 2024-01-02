@@ -2,7 +2,7 @@ name: dnt-hyttesok
 
 on:
   schedule:
-    - cron: "*/2 * * * *"
+    - cron: "*/10 * * * *"
 
 jobs:
   cron:
