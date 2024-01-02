@@ -1,9 +1,8 @@
 name: dnt-hyttesok
 
 on:
-  # Triggers the workflow every 10 minutes
   schedule:
-    - cron: "*/10 * * * *"
+    - cron: "*/2 * * * *"
 
 jobs:
   cron:
@@ -15,3 +14,8 @@ jobs:
 
       - run: bun install
       - run: bun index.ts
+        env:
+          AIRTABLE_SECRET: ${{ secrets.AIRTABLE_SECRET }}
+          AIRTABLE_APP: ${{ secrets.AIRTABLE_APP }}
+          AIRTABLE_TABLE: ${{ secrets.AIRTABLE_TABLE }}
+          SLACK_URL: ${{ secrets.SLACK_URL }}
