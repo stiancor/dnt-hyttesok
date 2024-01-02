@@ -1,0 +1,17 @@
+name: dnt-hyttesok
+
+on:
+  # Triggers the workflow every 10 minutes
+  schedule:
+    - cron: "*/10 * * * *"
+
+jobs:
+  cron:
+    name: run-bun
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: oven-sh/setup-bun@v1
+
+      - run: bun install
+      - run: bun index.ts
