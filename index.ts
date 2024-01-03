@@ -1,4 +1,4 @@
-import { format } from "date-fns";
+import { parseISO, format } from "date-fns";
 import {fetchListOfWantedBookings, turnOffNotification} from "./db";
 import postMessageToSlack from "./slack"
 import type { Accommodation, AccommodationWrapper } from './dnt_types.ts';
@@ -34,9 +34,14 @@ const getAvailableCabins = (dntResponses: Accommodation[]): Accommodation[] => {
   return dntResponses.filter((accommodation: Accommodation) => accommodation.availability.available);
 }
 
+function norwegianDateFormat(dateStr): string {
+  return format(parseISO(dateStr), 'dd.MM.yyyy')
+}
+
 function createMessage(cabin: Accommodation): string {
-  let period = `fra ${cabin.availability.steps[0].from.substring(0, 10)} til ${cabin.availability.steps[0].to.substring(0, 10)}`
-  return `<!channel> ${cabin.unitName} har blitt ledig ${period}. Totalpris ${cabin.prices[0].calculatedPrice} kr.`
+  const fromDate = norwegianDateFormat(cabin.availability.steps[0].from)
+  const toDate = norwegianDateFormat(cabin.availability.steps[cabin.availability.steps.length - 1].to)
+  return `<!channel> ${cabin.unitName} har blitt ledig fra ${fromDate} til ${toDate}. Pris ${cabin.prices[1].calculatedPrice} kr.`
 }
 
 getAvailableCabins(dntResponses).map(cabin => {
