@@ -1,4 +1,4 @@
-import { format, parseISO } from "date-fns";
+import { format } from "date-fns";
 import { fetchListOfWantedBookings, turnOffNotification } from "./db";
 import type { WantedBooking } from "./db_types.ts";
 import type { Accommodation, AccommodationWrapper } from "./dnt_types.ts";
@@ -48,7 +48,7 @@ const getAvailableCabins = (dntResponses: Accommodation[]): Accommodation[] => {
 };
 
 function norwegianDateFormat(dateStr): string {
-	return format(parseISO(dateStr), "dd.MM.yyyy");
+	return format(new Date(dateStr), "dd.MM.yyyy");
 }
 
 function createMessage(cabin: Accommodation): string {
@@ -59,7 +59,7 @@ function createMessage(cabin: Accommodation): string {
 	const additionalServices =
 		cabin?.additionalServices?.length > 0
 			? `Ekstratjenester: ${cabin.additionalServices
-					.map((obj) => `${obj.name} ${obj.price} kr`)
+					.map((obj) => `${obj.name} ${obj.price} kr ${obj.serviceType === 'perDay' ? 'per dag' : ''}`)
 					.join(", ")}`
 			: "";
 	return `<!channel> ${cabin.unitName} har blitt ledig fra ${fromDate} til ${toDate}. Pris ${cabin.prices[1].calculatedPrice} kr. ${additionalServices}`;
