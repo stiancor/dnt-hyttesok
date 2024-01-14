@@ -1,4 +1,4 @@
-import {format, FormatOptions} from "date-fns";
+import { FormatOptions, format, parseISO } from "date-fns";
 import { fetchListOfWantedBookings, turnOffNotification } from "./db";
 import type { WantedBooking } from "./db_types.ts";
 import type { Accommodation, AccommodationWrapper } from "./dnt_types.ts";
@@ -11,13 +11,13 @@ const fetchDntCabinStatus = async (
 ): Promise<AccommodationWrapper | undefined> => {
 	try {
 		const response = await fetch(
-			`https://visbook.dnt.no/api/${wantedBooking.id}/webproducts/${format(
-				wantedBooking.from,
-				"yyyy-MM-dd",
-			)}/${format(wantedBooking.to, "yyyy-MM-dd", {timezone: "Europe/Oslo"} as FormatOptions)}`,
+			`https://visbook.dnt.no/api/${wantedBooking.id}/webproducts/${wantedBooking.from}/${wantedBooking.to}`,
 		);
 		const json = await response.json();
-		return { ...json, externalId: wantedBooking.airtableId };
+		return {
+			...json,
+			externalId: wantedBooking.airtableId,
+		};
 	} catch (error) {
 		console.log(error);
 	}
@@ -29,13 +29,17 @@ const fetchDntResponses = async (
 	const res = await Promise.all(
 		wantedBookings.map((wantedBooking) => fetchDntCabinStatus(wantedBooking)),
 	);
-	return res.flatMap((accWrapper) => {
-		if (accWrapper && accWrapper.accommodations[0]) {
-			const accommodation = accWrapper.accommodations[0];
-			return [{ ...accommodation, externalDbId: accWrapper.externalId }];
-		} else {
-			return [];
+	return res.flatMap((accommodationWrapper) => {
+		if (accommodationWrapper?.accommodations[0]) {
+			const accommodation = accommodationWrapper.accommodations[0];
+			return [
+				{
+					...accommodation,
+					externalDbId: accommodationWrapper.externalId,
+				},
+			];
 		}
+		return [];
 	});
 };
 
@@ -47,8 +51,10 @@ const getAvailableCabins = (dntResponses: Accommodation[]): Accommodation[] => {
 	);
 };
 
-function norwegianDateFormat(dateStr): string {
-	return format(new Date(dateStr), "dd.MM.yyyy", {timezone: "Europe/Oslo"} as FormatOptions);
+function norwegianDateFormat(dateStr: string): string {
+	return format(parseISO(dateStr), "dd.MM.yyyy", {
+		timezone: "Europe/Oslo",
+	} as FormatOptions);
 }
 
 function createMessage(cabin: Accommodation): string {
@@ -59,7 +65,12 @@ function createMessage(cabin: Accommodation): string {
 	const additionalServices =
 		cabin?.additionalServices?.length > 0
 			? `Ekstratjenester: ${cabin.additionalServices
-					.map((obj) => `${obj.name} ${obj.price} kr ${obj.serviceType === 'perDay' ? 'per dag' : ''}`)
+					.map(
+						(obj) =>
+							`${obj.name} ${obj.price} kr ${
+								obj.serviceType === "perDay" ? "per dag" : ""
+							}`,
+					)
 					.join(", ")}`
 			: "";
 	return `<!channel> ${cabin.unitName} har blitt ledig fra ${fromDate} til ${toDate}. Pris ${cabin.prices[1].calculatedPrice} kr. ${additionalServices}`;

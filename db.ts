@@ -1,4 +1,3 @@
-import { parseISO } from "date-fns";
 import type { WantedBooking } from "./db_types";
 import type { Accommodation } from "./dnt_types";
 
@@ -10,8 +9,8 @@ const mapToWantedAccommodations = (jsonBody: any): WantedBooking[] => {
 			id: row.fields.id,
 			wanted_number_of_beds: row.fields.wanted_number_of_beds,
 			is_active: row.fields.is_active,
-			from: parseISO(row.fields.from),
-			to: parseISO(row.fields.to),
+			from: row.fields.from,
+			to: row.fields.to,
 		};
 	});
 };

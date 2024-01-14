@@ -4,6 +4,6 @@ export type WantedBooking = {
 	id: number;
 	wanted_number_of_beds: number;
 	is_active: boolean;
-	from: Date;
-	to: Date;
+	from: string;
+	to: string;
 };
