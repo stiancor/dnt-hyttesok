@@ -1,4 +1,4 @@
-import { format } from "date-fns";
+import {format, FormatOptions} from "date-fns";
 import { fetchListOfWantedBookings, turnOffNotification } from "./db";
 import type { WantedBooking } from "./db_types.ts";
 import type { Accommodation, AccommodationWrapper } from "./dnt_types.ts";
@@ -14,7 +14,7 @@ const fetchDntCabinStatus = async (
 			`https://visbook.dnt.no/api/${wantedBooking.id}/webproducts/${format(
 				wantedBooking.from,
 				"yyyy-MM-dd",
-			)}/${format(wantedBooking.to, "yyyy-MM-dd")}`,
+			)}/${format(wantedBooking.to, "yyyy-MM-dd", {timezone: "Europe/Oslo"} as FormatOptions)}`,
 		);
 		const json = await response.json();
 		return { ...json, externalId: wantedBooking.airtableId };
@@ -48,7 +48,7 @@ const getAvailableCabins = (dntResponses: Accommodation[]): Accommodation[] => {
 };
 
 function norwegianDateFormat(dateStr): string {
-	return format(new Date(dateStr), "dd.MM.yyyy");
+	return format(new Date(dateStr), "dd.MM.yyyy", {timezone: "Europe/Oslo"} as FormatOptions);
 }
 
 function createMessage(cabin: Accommodation): string {
