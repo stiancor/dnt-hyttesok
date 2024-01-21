@@ -1,4 +1,3 @@
-import { FormatOptions, format, parseISO } from "date-fns";
 import { fetchListOfWantedBookings, turnOffNotification } from "./db";
 import type { WantedBooking } from "./db_types.ts";
 import type { Accommodation, AccommodationWrapper } from "./dnt_types.ts";
@@ -52,9 +51,10 @@ const getAvailableCabins = (dntResponses: Accommodation[]): Accommodation[] => {
 };
 
 function norwegianDateFormat(dateStr: string): string {
-	return format(parseISO(dateStr), "dd.MM.yyyy", {
-		timezone: "Europe/Oslo",
-	} as FormatOptions);
+	const year = dateStr.slice(0, 4);
+	const month = dateStr.slice(5, 7);
+	const day = dateStr.slice(8, 10);
+	return `${day}.${month}.${year}`;
 }
 
 function createMessage(cabin: Accommodation): string {
