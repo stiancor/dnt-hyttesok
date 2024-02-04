@@ -9,9 +9,13 @@ const fetchDntCabinStatus = async (
 	wantedBooking: WantedBooking,
 ): Promise<AccommodationWrapper | undefined> => {
 	try {
-		const response = await fetch(
-			`https://visbook.dnt.no/api/${wantedBooking.id}/webproducts/${wantedBooking.from}/${wantedBooking.to}`,
-		);
+		const url = `https://visbook.${
+			wantedBooking.domain ? wantedBooking.domain : "dnt"
+		}.no/api/${wantedBooking.id}/webproducts/${wantedBooking.from}/${
+			wantedBooking.to
+		}`;
+		console.log(`Sjekker tilgjengelighet for ${wantedBooking.cabin}: ${url}`);
+		const response = await fetch(url);
 		const json = await response.json();
 		return {
 			...json,
@@ -29,8 +33,9 @@ const fetchDntResponses = async (
 		wantedBookings.map((wantedBooking) => fetchDntCabinStatus(wantedBooking)),
 	);
 	return res.flatMap((accommodationWrapper) => {
-		if (accommodationWrapper?.accommodations[0]) {
-			const accommodation = accommodationWrapper.accommodations[0];
+		if (accommodationWrapper?.accommodations[accommodationWrapper.row]) {
+			const accommodation =
+				accommodationWrapper.accommodations[accommodationWrapper.row];
 			return [
 				{
 					...accommodation,

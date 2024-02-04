@@ -11,6 +11,8 @@ const mapToWantedAccommodations = (jsonBody: any): WantedBooking[] => {
 			is_active: row.fields.is_active,
 			from: row.fields.from,
 			to: row.fields.to,
+			domain: row.fields.domain,
+			row: row.fields.row,
 		};
 	});
 };

@@ -6,4 +6,6 @@ export type WantedBooking = {
 	is_active: boolean;
 	from: string;
 	to: string;
+	domain?: string;
+	row?: number;
 };
