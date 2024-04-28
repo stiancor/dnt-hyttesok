@@ -17,7 +17,7 @@ const mapToWantedAccommodations = (jsonBody: any): WantedBooking[] => {
 	});
 };
 
-const formula = "{is_active}=TRUE()";
+const formula = "AND(IS_AFTER({from}, TODAY()), {is_active})";
 
 const fetchListOfWantedBookings = async (): Promise<WantedBooking[]> => {
 	try {
