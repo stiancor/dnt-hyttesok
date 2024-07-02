@@ -36,4 +36,5 @@ export type Accommodation = {
 export type AccommodationWrapper = {
 	accommodations: Accommodation[];
 	externalId: string;
+	row: number;
 };

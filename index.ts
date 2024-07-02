@@ -20,6 +20,7 @@ const fetchDntCabinStatus = async (
 		return {
 			...json,
 			externalId: wantedBooking.airtableId,
+			row: wantedBooking.row
 		};
 	} catch (error) {
 		console.log(error);
