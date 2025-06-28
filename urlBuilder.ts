@@ -32,6 +32,7 @@ export function generateUrls(wantedBooking: UnitWish): UnitUrls[] {
 	return unitRange.map((unitId) => {
 		return {
 			unitId: unitId,
+			name: wantedBooking.name,
 			urls: months.map((month) => {
 				return generateUrl({
 					domain: wantedBooking.domain,

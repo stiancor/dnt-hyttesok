@@ -60,6 +60,7 @@ export type UrlMetaData = {
 };
 
 export type UnitUrls = {
+	name: string;
 	unitId: number;
 	urls: string[];
 };
