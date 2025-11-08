@@ -1,22 +1,17 @@
 export type AvailabilityResponse = {
-	items: Array<{
-		webProducts: Array<{
-			id: number;
-			type: string;
-			encryptedCompanyId: string;
-			availability: {
-				available: boolean;
-				reason: string | null;
-				reasonText: string;
-				steps: Array<{
-					availableUnits: number;
-					from: string;
-					to: string;
-				}>;
-			};
+	data: {
+		availabilityList: Array<{
+			date: string;
+			products: Array<{
+				available: number;
+				product: {
+					company_id: number;
+					product_id: number;
+					unit_id: number;
+				};
+			}>;
 		}>;
-		date: string;
-	}>;
+	};
 };
 
 export type UnitFetchResult = {
@@ -25,6 +20,7 @@ export type UnitFetchResult = {
 		url: string;
 		data: AvailabilityResponse;
 	}[];
+	unitRange: number[];
 };
 
 export type AvailabilityResponseWrapper = {
@@ -52,15 +48,9 @@ export type UnitWish = {
 	domain: string;
 };
 
-export type UrlMetaData = {
-	cabinId: number;
-	unitId: number;
-	month: string;
-	domain: string;
-};
-
 export type UnitUrls = {
 	name: string;
 	unitId: number;
 	urls: string[];
+	unitRange: number[];
 };

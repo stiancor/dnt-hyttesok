@@ -1,5 +1,5 @@
-import {format, parse, startOfDay} from "date-fns";
-import {nb} from "date-fns/locale";
+import { format, parse, startOfDay } from "date-fns";
+import { nb } from "date-fns/locale";
 
 function getDate(dateStr: string): Date {
 	return startOfDay(parse(dateStr, "yyyy-MM-dd", new Date()));

@@ -1,46 +1,44 @@
-import {eachMonthOfInterval, format, parse} from "date-fns";
-import {getFromDate} from "./dateHelper.ts";
-import type {UnitUrls, UnitWish, UrlMetaData} from "./types.ts";
-
-const generateYearMonthArray = (fromDate: string, toDate: string): string[] => {
-	const start = getFromDate(fromDate);
-	const end = parse(toDate, "yyyy-MM-dd", new Date());
-
-	return eachMonthOfInterval({ start, end }).map((date) =>
-		format(date, "yyyy-MM"),
-	);
-};
+import { format } from "date-fns";
+import { getFromDate } from "./dateHelper.ts";
+import type { UnitUrls, UnitWish } from "./types.ts";
 
 function createRange(start: number, end: number): number[] {
 	return Array.from({ length: end - start + 1 }, (_, i) => start + i);
 }
 
-function generateUrl(m: UrlMetaData): string {
-	return `https://visbook.${
-		m.domain
-	}.no/api/${m.cabinId}/availability/${m.unitId}/${m.month}`;
+function generateUrl(
+	cabinId: number,
+	fromDate: string,
+	toDate: string,
+): string {
+	const formattedFromDate = format(getFromDate(fromDate), "yyyy-MM-dd");
+	const formattedToDate = format(new Date(toDate), "yyyy-MM-dd");
+	return `https://hyttebestilling.dnt.no/api/booking/availability-calendar?cabinId=${cabinId}&fromDate=${formattedFromDate}&toDate=${formattedToDate}`;
 }
 
 export function generateUrls(wantedBooking: UnitWish): UnitUrls[] {
-	const unitRange = createRange(
-		wantedBooking.unit_id_from,
-		wantedBooking.unit_id_to
-			? wantedBooking.unit_id_to
-			: wantedBooking.unit_id_from,
-	);
-	const months = generateYearMonthArray(wantedBooking.from, wantedBooking.to);
-	return unitRange.map((unitId) => {
-		return {
-			unitId: unitId,
+	const unitRange =
+		wantedBooking.unit_id_from !== undefined
+			? createRange(
+					wantedBooking.unit_id_from,
+					wantedBooking.unit_id_to
+						? wantedBooking.unit_id_to
+						: wantedBooking.unit_id_from,
+				)
+			: [];
+
+	return [
+		{
+			unitId: wantedBooking.unit_id_from || 0,
 			name: wantedBooking.name,
-			urls: months.map((month) => {
-				return generateUrl({
-					domain: wantedBooking.domain,
-					cabinId: wantedBooking.cabin_group_id,
-					unitId: unitId,
-					month: month,
-				});
-			}),
-		};
-	});
+			urls: [
+				generateUrl(
+					wantedBooking.cabin_group_id,
+					wantedBooking.from,
+					wantedBooking.to,
+				),
+			],
+			unitRange: unitRange,
+		},
+	];
 }

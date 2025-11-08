@@ -1,5 +1,8 @@
-import {getNorwegianDateStr, toNorwegianDateWithDayStr} from "../dateHelper.ts";
-import type {AvailabilityWrapper} from "../types.ts";
+import {
+	getNorwegianDateStr,
+	toNorwegianDateWithDayStr,
+} from "../dateHelper.ts";
+import type { AvailabilityWrapper } from "../types.ts";
 
 function createPartialMatchMessage(aw: AvailabilityWrapper): string {
 	const fromDate = getNorwegianDateStr(aw.unitWish.from);
